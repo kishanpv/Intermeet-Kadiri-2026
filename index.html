@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Intermeet 2026 Kadiri</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:wght@400;600&family=Noto+Sans+Telugu:wght@400;600&display=swap">
+<style>
+/* Layout: sunrise-gradient hero with photo mosaic and animated numbers; a sticky "journey" stepper that tracks
+   the scroll; each chapter has a tappable schedule rail, photo collages and a full-screen swipe viewer. */
+:root{
+  --bg:#F5F7FC;--surface:#FFFFFF;--fg:#15213F;--muted:#5A6580;--line:#DCE2EF;
+  --blue:#1F5FBF;--gold:#C48A0A;--orange:#EF7A2B;--green:#2E9E6B;--pink:#C63C8E;
+  --hero1:#0C1D44;--hero2:#1F4C9E;--hero3:#F08A3C;
+  --display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;--body:'Source Sans 3','Segoe UI',system-ui,sans-serif;--tel:'Noto Sans Telugu','Nirmala UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0C1424;--surface:#16213A;--fg:#E8EDF7;--muted:#9CA8C2;--line:#27355A;--blue:#7DAEFF;--gold:#E3B24E;--orange:#FF9A55;--green:#58C794;--pink:#EC74B8;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0C1424;--surface:#16213A;--fg:#E8EDF7;--muted:#9CA8C2;--line:#27355A;--blue:#7DAEFF;--gold:#E3B24E;--orange:#FF9A55;--green:#58C794;--pink:#EC74B8;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:17px;line-height:1.6}
+img{display:block;max-width:100%}
+.wrap{max-width:780px;margin-inline:auto;padding-inline:18px}
+button{font:inherit}
+/* hero */
+.hero{background:linear-gradient(165deg,var(--hero1) 0%,var(--hero2) 55%,var(--hero3) 130%);color:#fff;position:relative;overflow:hidden}
+.hero::before,.hero::after{content:"";position:absolute;border-radius:50%;opacity:.18;background:#fff;animation:drift 14s ease-in-out infinite}
+.hero::before{width:260px;height:260px;right:-80px;top:40px}.hero::after{width:150px;height:150px;left:-50px;bottom:120px;animation-delay:-6s}
+@keyframes drift{50%{transform:translateY(-24px) scale(1.08)}}
+/* justified rows: every tile keeps its photo's own shape, so nothing is cropped and every head stays in frame */
+.mosaic{display:flex;flex-direction:column;gap:4px;position:relative;z-index:1}
+.mrow{display:flex;gap:4px;width:100%}
+.mrow button{flex:var(--a) 1 0;min-width:0;aspect-ratio:var(--a);position:relative;display:block;padding:0;border:0;background:#0006;overflow:hidden;cursor:pointer}
+.mrow img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transition:transform .5s}
+.mrow button:hover img{transform:scale(1.04)}
+.htext{position:relative;z-index:1;padding-block:22px 28px}
+.logos{background:#fff;border-radius:10px;padding:6px 10px;display:inline-block;margin-bottom:14px}.logos img{height:44px;width:auto}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(36px,10vw,64px);line-height:1;margin:0 0 6px}
+.tag{font-family:var(--display);font-weight:600;font-size:clamp(18px,4.6vw,24px);color:#FFD98A;margin:0 0 12px}
+.lede{margin:0;color:#E6EDFB;max-width:56ch}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:20px}
+.stat{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:14px;padding:10px 6px;text-align:center}
+.stat b{display:block;font-family:var(--display);font-size:clamp(22px,6vw,32px);color:#FFD98A;line-height:1.1;font-variant-numeric:tabular-nums}
+.stat span{font-size:12.5px;line-height:1.2;display:block;color:#E6EDFB}
+/* journey stepper */
+#journey{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--bg);border-bottom:1px solid var(--line)}
+#journey .bar{height:3px;background:var(--line)}#journey .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--orange));transition:width .15s}
+.steps{display:flex;gap:4px;overflow-x:auto;padding:8px 18px;scrollbar-width:none;max-width:780px;margin-inline:auto}
+.steps::-webkit-scrollbar{display:none}
+.steps a{flex:0 0 auto;display:flex;align-items:center;gap:7px;text-decoration:none;color:var(--muted);font-weight:600;font-size:14px;padding:5px 11px 5px 6px;border-radius:999px;border:1px solid var(--line);background:var(--surface)}
+.steps a svg{width:24px;height:24px;padding:4px;border-radius:50%;background:var(--line);color:var(--fg)}
+.steps a.on{color:var(--fg);border-color:var(--blue);box-shadow:0 0 0 2px color-mix(in srgb,var(--blue) 25%,transparent)}
+.steps a.on svg{background:var(--blue);color:#fff}
+a:focus-visible,button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+/* chapters */
+section{padding-block:38px 6px}
+.ch{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.ico{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;color:#fff;flex:none}
+.ico svg{width:26px;height:26px}
+.kicker{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0}
+h2{font-family:var(--display);font-weight:800;font-size:clamp(25px,6.2vw,34px);line-height:1.1;margin:0;text-wrap:balance}
+h3{font-family:var(--display);font-weight:600;font-size:20px;margin:24px 0 6px;color:var(--blue)}
+p{margin:0 0 14px;max-width:65ch}
+.cap{font-size:14px;color:var(--muted)}
+/* collages */
+.grid{display:grid;gap:4px;margin:16px 0 8px;border-radius:14px;overflow:hidden}
+.grid button{display:block;width:100%;height:100%;min-width:0;padding:0;border:0;background:var(--line);overflow:hidden;cursor:pointer;position:relative;min-height:0}
+.grid img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .4s}.grid button:hover img{transform:scale(1.05)}
+.g3{grid-template-columns:2fr 1fr;grid-template-rows:repeat(2,clamp(90px,24vw,170px))}.g3 button:first-child{grid-row:1/3}
+.g2{grid-template-columns:1fr 1fr;grid-auto-rows:clamp(120px,32vw,230px)}
+.g1{grid-template-columns:1fr;grid-auto-rows:clamp(190px,50vw,380px)}
+.g6{grid-template-columns:repeat(3,1fr);grid-auto-rows:clamp(90px,24vw,170px)}
+.grid button::after{content:attr(data-cap);position:absolute;inset:auto 0 0 0;padding:16px 8px 6px;font-size:12.5px;line-height:1.25;color:#fff;text-align:left;background:linear-gradient(transparent,rgba(0,0,0,.7));opacity:0;transition:opacity .25s}
+.grid button:hover::after,.grid button:focus-visible::after{opacity:1}
+@media (hover:none){.grid button::after{opacity:0}}
+.reel{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;margin:16px -18px 6px;padding:0 18px 10px}
+.reel button{flex:0 0 78%;max-width:340px;scroll-snap-align:center;padding:0;border:0;background:none;text-align:left;color:var(--fg);cursor:pointer}
+.reel img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:14px}
+.reel span{display:block;font-size:14px;color:var(--muted);padding-top:6px}
+/* schedule rail */
+.tabs{display:flex;gap:6px;margin:14px 0 8px}
+.tabs button{flex:1;padding:9px 6px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font-weight:600;cursor:pointer;font-size:14.5px}
+.tabs button[aria-selected="true"]{background:var(--blue);color:#fff;border-color:var(--blue)}
+.rail{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 12px;scroll-snap-type:x proximity}
+.slot{flex:0 0 168px;scroll-snap-align:start;background:var(--surface);border:1px solid var(--line);border-top:5px solid var(--c);border-radius:14px;padding:10px 12px;text-align:left;cursor:pointer;color:var(--fg)}
+.slot time{font-size:12.5px;font-weight:600;color:var(--c);display:block;font-variant-numeric:tabular-nums}
+.slot b{display:block;font-family:var(--display);font-size:15.5px;line-height:1.2;margin:2px 0 3px}
+.slot small{color:var(--muted);font-size:13px;line-height:1.3;display:block}
+.slot[aria-pressed="true"]{box-shadow:0 0 0 2px var(--c)}
+.detail{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;min-height:64px;font-size:15.5px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--muted);margin:6px 0 0}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;background:var(--c)}
+/* cards */
+.trainers{display:grid;gap:12px;margin:14px 0}
+.tcard{background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--gold);border-radius:14px;padding:12px 16px}
+.tcard b{font-family:var(--display);font-size:18px;display:block}.tcard em{font-style:normal;color:var(--gold);font-weight:600;font-size:14px;display:block;margin-bottom:4px}
+.tcard p{margin:0;font-size:15.5px}
+.dias{display:grid;gap:8px;margin:12px 0}
+.dias div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 14px;font-size:15.5px}
+.dias b{color:var(--blue)}
+.clips{display:grid;gap:10px;grid-template-columns:repeat(2,1fr);margin:16px 0}
+.clips button{padding:0;border:1px solid var(--line);background:var(--surface);border-radius:12px;overflow:hidden;cursor:pointer}
+.clips img{width:100%;height:150px;object-fit:cover;object-position:top}
+.facts{display:grid;gap:10px;margin:14px 0}
+.fact{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 16px}.fact b{display:block;font-family:var(--display);color:var(--blue)}
+.thanks{display:grid;gap:8px;margin:14px 0}
+.thanks div{border-left:4px solid var(--orange);padding:2px 0 2px 12px;font-size:16px}.thanks b{display:block;font-size:15px}
+.tel{font-family:var(--tel);line-height:1.9;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:30px}
+.tel h2{font-family:var(--tel);font-weight:600;margin-bottom:10px}.tel p{max-width:none}
+footer{padding-block:30px 60px;color:var(--muted);font-size:14px;border-top:1px solid var(--line);margin-top:36px}
+/* viewer */
+#lb{position:fixed;inset:0;z-index:50;background:rgba(5,9,18,.96);display:none;flex-direction:column}
+#lb.on{display:flex}
+#lb .stage{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;padding:env(safe-area-inset-top,0px) 8px 0}
+#lb img{max-height:100%;max-width:100%;object-fit:contain;border-radius:4px}
+#lb .bar{display:flex;align-items:center;gap:10px;color:#fff;padding:10px 14px calc(12px + env(safe-area-inset-bottom,0px));font-size:15px}
+#lb .bar p{flex:1;margin:0;max-width:none}
+#lb button{background:rgba(255,255,255,.15);color:#fff;border:0;border-radius:999px;min-width:44px;height:44px;font-size:20px;cursor:pointer}
+#lb .close{position:absolute;top:calc(8px + env(safe-area-inset-top,0px));right:10px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.hero::before,.hero::after{animation:none}*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-flag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></symbol>
+    <symbol id="i-fire" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c1 4 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 1-9z"/></symbol>
+    <symbol id="i-cap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2.5 9 2.5 12 0v-5"/></symbol>
+    <symbol id="i-news" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h10M7 17h6"/></symbol>
+    <symbol id="i-cake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16v-7H4zM4 15c2 2 4 2 6 0s4-2 6 0 3 1 4 0M12 9V6M12 4v.5"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-8-5-8-11a4.5 4.5 0 0 1 8-3 4.5 4.5 0 0 1 8 3c0 6-8 11-8 11z"/></symbol>
+    <symbol id="i-te" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h9M8.5 5v2c0 4-2 6-4 7M6 10c1.5 2 3.5 3 6 3.5M14 20l4-10 4 10M15.5 17h5"/></symbol>
+    <symbol id="i-bag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l1 12H5zM9 8a3 3 0 0 1 6 0"/></symbol>
+  </defs>
+</svg>
+
+<header class="hero">
+  <div class="mosaic" id="mosaic"></div>
+  <div class="wrap htext">
+    <div class="logos"><img src="img/logos.png" alt="Rotary Bangalore West, Rotary Club of Kadiri and Harish Schools logos"></div>
+    <h1>Intermeet 2026</h1>
+    <p class="tag">Inspire · Create · Lead</p>
+    <p class="lede">Three days at Harish Residential School, Kadiri, where children found their voice, made friends, and learned that leadership can be fun. Scroll down to follow the journey.</p>
+    <div class="stats">
+      <div class="stat"><b data-n="3">0</b><span>days</span></div>
+      <div class="stat"><b data-n="96">0</b><span>registered</span></div>
+      <div class="stat"><b data-n="100" data-plus="1">0</b><span>children reached</span></div>
+      <div class="stat"><b data-n="14">0</b><span>sessions &amp; shows</span></div>
+    </div>
+  </div>
+</header>
+
+<nav id="journey" aria-label="Journey">
+  <div class="bar"><i id="prog"></i></div>
+  <div class="steps" id="steps"></div>
+</nav>
+
+<main class="wrap">
+
+<section id="top">
+  <div class="ch"><span class="ico" style="background:var(--blue)"><svg><use href="#i-flag"/></svg></span><div><p class="kicker">The camp</p><h2>A leadership camp built for kids</h2></div></div>
+  <div class="facts">
+    <div class="fact"><b>Lead club</b>Rotary Bangalore West (District 3192)</div>
+    <div class="fact"><b>Co-hosted by</b>Rotary Club of Kadiri (District 3160), Harish Schools and Manasa Dhara Charitable Trust</div>
+    <div class="fact"><b>When and where</b>2, 3 and 4 October 2026, Harish Residential School, Kadiri · ages 14 to 16 · overall budget approximately INR 4 lakhs</div>
+  </div>
+  <p>Children spent three days on leadership, safety, service and a great deal of fun. Because the campus is residential, more than 100 children benefited against 96 registrations.</p>
+  <h3>Meet the trainers</h3>
+  <p>The heart of Intermeet was a team of trainers from Buoyancee Training Academy, who made leadership feel like play.</p>
+  <div class="trainers">
+    <div class="tcard"><b>Ms. Sunitha Kolar</b><em>Trainer · Clarity Mentor · Accountability Partner</em><p>Helps people gain clarity, build discipline and strengthen self-belief through a calm, grounded and judgement-free style, which made her sessions a safe space for the children to open up.</p></div>
+    <div class="tcard"><b>Ms. Sindhu Sajeev</b><em>Human Potential and Transformation Coach · Facilitator</em><p>ICF-certified coach with 27+ years of experience across corporate leadership, coaching and learning facilitation. She also brings yoga and mindfulness practice, and has run RYLA student sessions in government residential schools.</p></div>
+  </div>
+  <div class="grid g2" data-set>
+    <button data-src="img/boyspeak.jpg" data-cap="Ms. Sunitha Kolar listens as a child shares his thoughts"><img src="img/boyspeak.jpg" alt="Trainer listening to a child speaking" loading="lazy"></button>
+    <button data-src="img/trio.jpg" data-cap="Ms. Sindhu Sajeev (right) with fellow trainers"><img src="img/trio.jpg" alt="Three trainers on stage" loading="lazy"></button>
+  </div>
+  <p class="cap"><b>Kids' facilitators:</b> Ms. Usha G and Ms. Kavya N, who led the children's activities.</p>
+</section>
+
+<section id="before">
+  <div class="ch"><span class="ico" style="background:var(--gold)"><svg><use href="#i-bag"/></svg></span><div><p class="kicker">Before the children arrived</p><h2>Good camps are won early</h2></div></div>
+  <p>A few of our Rotarians travelled to Kadiri well ahead of the dates for a recce of the campus, the dining hall, the session rooms and the open ground. By the night of 1 October the setup team had landed to help with arrangements: banners went up, kits were counted and the registration desk took shape.</p>
+  <div class="grid g2" data-set>
+    <button data-src="img/setup.jpg" data-cap="Welcome banner goes up, early on 2 October"><img src="img/setup.jpg" alt="Intermeet banner being put up" loading="lazy"></button>
+    <button data-src="img/insess.jpg" data-cap="Rotarians brief the children on the first morning"><img src="img/insess.jpg" alt="Rotarian addressing the children" loading="lazy"></button>
+  </div>
+</section>
+
+<section id="day1">
+  <div class="ch"><span class="ico" style="background:var(--orange)"><svg><use href="#i-sun"/></svg></span><div><p class="kicker">Day 1 · Friday 2 October</p><h2>Discover and inspire</h2></div></div>
+  <p>Registration opened at 8:30 AM. The children arrived with bags, curiosity and a fair bit of nervous energy, and the Rotarians themselves served the first breakfast. Every participant got a camp kit under the Rotary banner; within minutes the nerves gave way to name tags, introductions and new friends.</p>
+  <div class="grid g3" data-set>
+    <button data-src="img/breakfast.jpg" data-cap="Rotarians serve breakfast to the children"><img src="img/breakfast.jpg" alt="Rotarians serving breakfast" loading="lazy"></button>
+    <button data-src="img/kit3.jpg" data-cap="Camp kits handed out with a smile"><img src="img/kit3.jpg" alt="A girl receiving her camp kit" loading="lazy"></button>
+    <button data-src="img/kit4.jpg" data-cap="Every child gets a kit and a welcome"><img src="img/kit4.jpg" alt="Boys receiving camp kits" loading="lazy"></button>
+  </div>
+  <p>The sessions were led by our trainers, with Ms. Usha G and Ms. Kavya N of Buoyancee keeping the children moving. In the evening session on speaking, listening and influencing, the children learned the 8 Core Pillars of a Powerful Presentation, from voice and body language to eye contact and handling the unexpected.</p>
+  <div class="grid g3" data-set>
+    <button data-src="img/comm1.jpg" data-cap="Trainer working with the children"><img src="img/comm1.jpg" alt="Trainer with children" loading="lazy"></button>
+    <button data-src="img/pillars.jpg" data-cap="8 Core Pillars of a Powerful Presentation"><img src="img/pillars.jpg" alt="Presentation pillars slide" loading="lazy"></button>
+    <button data-src="img/hall.jpg" data-cap="The communication session in the hall"><img src="img/hall.jpg" alt="Hall during the session" loading="lazy"></button>
+  </div>
+  <h3>Tap a time slot to see how the day flowed</h3>
+  <div class="tabs" role="tablist" id="tabs">
+    <button role="tab" aria-selected="true" data-day="0">Day 1</button><button role="tab" aria-selected="false" data-day="1">Day 2</button><button role="tab" aria-selected="false" data-day="2">Day 3</button>
+  </div>
+  <div class="rail" id="rail"></div>
+  <div class="detail" id="detail">Tap a card above to see what happened.</div>
+  <div class="legend"><span style="--c:var(--blue)"><i></i>Learning</span><span style="--c:var(--orange)"><i></i>Energiser and fun</span><span style="--c:var(--pink)"><i></i>Awareness</span><span style="--c:var(--green)"><i></i>Ceremony</span></div>
+</section>
+
+<section id="stage">
+  <div class="ch"><span class="ico" style="background:var(--pink)"><svg><use href="#i-mic"/></svg></span><div><p class="kicker">Friday night</p><h2>Stars on stage</h2></div></div>
+  <p>The evening belonged to the children. In My Moment to Shine, the individual talent show, they danced, sang, acted and told stories in front of 100+ friends, many for the first time. Volunteers from Rotaract Bangalore West hosted the show, and the Rotarians clapped the loudest.</p>
+  <div class="reel" data-set>
+    <button data-src="img/dance.jpg" data-cap="Group dance: four girls in blue and red"><img src="img/dance.jpg" alt="Group dance" loading="lazy"><span>Group dance</span></button>
+    <button data-src="img/solo.jpg" data-cap="A solo classical performance"><img src="img/solo.jpg" alt="Solo dance" loading="lazy"><span>Solo dance</span></button>
+    <button data-src="img/duet.jpg" data-cap="A duet performance, to the cheers of the hall"><img src="img/duet.jpg" alt="Duet" loading="lazy"><span>Duet</span></button>
+    <button data-src="img/sing.jpg" data-cap="Two boys sing together on stage"><img src="img/sing.jpg" alt="Two boys singing" loading="lazy"><span>Singing</span></button>
+  </div>
+  <p class="cap">Swipe for more. Tap a photo to enlarge.</p>
+</section>
+
+<section id="day2">
+  <div class="ch"><span class="ico" style="background:var(--green)"><svg><use href="#i-shield"/></svg></span><div><p class="kicker">Day 2 · Saturday 3 October</p><h2>Create, serve and collaborate</h2></div></div>
+  <p>The day began at 6 AM with yoga on the open ground. Morning sessions on leadership and ethical choices had children opening up, sharing their thoughts on the mic to a patient, encouraging audience.</p>
+  <div class="grid g2" data-set>
+    <button data-src="img/yoga.jpg" data-cap="Sunrise assembly and yoga"><img src="img/yoga.jpg" alt="Sunrise assembly" loading="lazy"></button>
+    <button data-src="img/outdoor.jpg" data-cap="Morning activities on the ground"><img src="img/outdoor.jpg" alt="Outdoor morning activity" loading="lazy"></button>
+  </div>
+  <h3>Stay Strong, Stay Safe</h3>
+  <p>Substance abuse and human trafficking are real concerns in and around Kadiri, so we brought in special facilitators, volunteers Mr. Munichowdappa and Ms. Padmini of Prakruthi NGO, for an age-appropriate session on prevention, personal safety and how to ask for help. The children sat in circles, asked questions and listened. It worked because the facilitators spoke with them, not at them.</p>
+  <div class="grid g3" data-set>
+    <button data-src="img/sess2.jpg" data-cap="Prakruthi NGO volunteers with the children"><img src="img/sess2.jpg" alt="Facilitators with children" loading="lazy"></button>
+    <button data-src="img/sess3.jpg" data-cap="The hall during the awareness session"><img src="img/sess3.jpg" alt="Awareness session" loading="lazy"></button>
+    <button data-src="img/stage.jpg" data-cap="Facilitators and guests on stage"><img src="img/stage.jpg" alt="Guests on stage" loading="lazy"></button>
+  </div>
+  <h3>Cervical cancer awareness, in parallel</h3>
+  <p>While the camp carried on, senior girl students at the Government Junior College for Girls, Kadiri, joined a Cervical Cancer Awareness and HPV Vaccination programme organised by Rotary Bangalore West, Rotary Club of Kadiri and Manasa Dhara Charitable Trust. Medical practitioners explained prevention, early detection and the facts and myths around HPV vaccination, and the students asked everything they wanted to.</p>
+  <div class="grid g3" data-set>
+    <button data-src="img/cc1.jpg" data-cap="Smiles and V-signs after the session"><img src="img/cc1.jpg" alt="Students making V signs" loading="lazy"></button>
+    <button data-src="img/cc4.jpg" data-cap="Students at the college session"><img src="img/cc4.jpg" alt="Students in a classroom" loading="lazy"></button>
+    <button data-src="img/cc3.jpg" data-cap="Programme poster with the doctors"><img src="img/cc3.jpg" alt="Programme poster" loading="lazy"></button>
+  </div>
+  <div id="night"></div>
+</section>
+
+<section id="fire">
+  <div class="ch"><span class="ico" style="background:var(--orange)"><svg><use href="#i-fire"/></svg></span><div><p class="kicker">Saturday night</p><h2>Around the fire</h2></div></div>
+  <p>The afternoon moved to Design Your Future and Service Begins with Me, then sports and a dinner of local millet dishes that children and Rotarians happily tucked into. After dark the stage moved outdoors: Fun Around the Fire, campfire games and the group talent show Stronger Together.</p>
+  <div class="grid g6" data-set>
+    <button data-src="img/girl.jpg" data-cap="Dinner time, big smile"><img src="img/girl.jpg" alt="Girl with dinner plate" loading="lazy"></button>
+    <button data-src="img/dine1.jpg" data-cap="Rotarians and the team at dinner"><img src="img/dine1.jpg" alt="Dining hall" loading="lazy"></button>
+    <button data-src="img/camp3.jpg" data-cap="Rotarians and children light the campfire"><img src="img/camp3.jpg" alt="Campfire lit" loading="lazy"></button>
+    <button data-src="img/camp4.jpg" data-cap="Campfire games"><img src="img/camp4.jpg" alt="Campfire games" loading="lazy"></button>
+  </div>
+</section>
+
+<section id="day3">
+  <div class="ch"><span class="ico" style="background:var(--blue)"><svg><use href="#i-cap"/></svg></span><div><p class="kicker">Day 3 · Sunday 4 October</p><h2>Lead forward</h2></div></div>
+  <p>Sunday opened with a mindful morning of yoga, then From Ideas to Action and My Leadership Promise, where each child wrote down a personal commitment. An RTO Inspector shared road safety tips, and the children planned their own closing ceremony.</p>
+  <h3>The Valedictory</h3>
+  <p>The camp closed on 4 October with the Valedictory, a joint Rotary club meeting of Rotary Bangalore West (District 3192) and Rotary Club of Kadiri (District 3160), whose agenda was the closure of Intermeet. The lamp was lit, and the programme moved through participant presentations, performances, the handing over of certificates and a vote of thanks. Several children said it was the first time they had spoken on stage. Every one of them held their certificate with pride.</p>
+  <div class="dias">
+    <div><b>On the dais:</b> DG Rtn. Keshav Reddy (District 3160), PDG Rtn. Chinappa Reddy and AG Rtn. Narendra Reddy</div>
+    <div><b>Rotary Club of Kadiri:</b> Rtn. Kishore, President, and Rtn. Raghavendra, Secretary</div>
+  </div>
+  <div class="grid g3" data-set>
+    <button data-src="img/close1.jpg" data-cap="Participants with their certificates, along with the DG, PDG and AG of Districts 3192 and 3160"><img src="img/close1.jpg" alt="Children holding certificates" loading="lazy"></button>
+    <button data-src="img/lamp.jpg" data-cap="Lighting the lamp at the Valedictory"><img src="img/lamp.jpg" alt="Lamp lighting" loading="lazy"></button>
+    <button data-src="img/circle.jpg" data-cap="Reflection circle with the facilitator"><img src="img/circle.jpg" alt="Reflection circle" loading="lazy"></button>
+  </div>
+  <div class="grid g1" data-set>
+    <button data-src="img/close2.jpg" data-cap="Rotarians, school children and volunteers at the Valedictory"><img src="img/close2.jpg" alt="Group photo at the Valedictory" loading="lazy"></button>
+  </div>
+  <p>The certificates of participation were handed over at the Valedictory itself, the last event of the camp.</p>
+  <div class="grid g2" data-set>
+    <button data-src="img/oct8a.jpg" data-cap="Rtn. Prashanth handing over participation certificates at the Valedictory"><img src="img/oct8a.jpg" alt="Certificate handover" loading="lazy"></button>
+    <button data-src="img/oct8b.jpg" data-cap="Another participant receiving a participation certificate at the Valedictory"><img src="img/oct8b.jpg" alt="Child with certificate" loading="lazy"></button>
+  </div>
+</section>
+
+<section id="news">
+  <div class="ch"><span class="ico" style="background:var(--pink)"><svg><use href="#i-news"/></svg></span><div><p class="kicker">In the news</p><h2>Kadiri's dailies carried the story</h2></div></div>
+  <p>Telugu newspapers including Andhra Jyothy and Surya reported on the camp across several days. Tap a clipping to read it.</p>
+  <div class="clips" data-set>
+    <button data-src="img/press1.jpg" data-cap="Press coverage"><img src="img/press1.jpg" alt="Telugu newspaper clipping" loading="lazy"></button>
+    <button data-src="img/press2.jpg" data-cap="Coverage of the Valedictory"><img src="img/press2.jpg" alt="Telugu newspaper clipping of the Valedictory" loading="lazy"></button>
+  </div>
+</section>
+
+<section id="rotarians">
+  <div class="ch"><span class="ico" style="background:var(--gold)"><svg><use href="#i-cake"/></svg></span><div><p class="kicker">The Rotarians</p><h2>Cake, tea and a lot of tea</h2></div></div>
+  <p>Rtn. Krishnamurthy, who came to the venue with his wife Ann Beena, was surprised with a birthday cake, shared with the Rotarians and the children. And on the night of 1 October, before the camp had even begun, a group of us made a late-night trip out for tea, a small tradition of every good Rotary camp.</p>
+  <div class="grid g1" data-set>
+    <button data-src="img/birthday.jpg" data-cap="Birthday celebration with Rotarians and children"><img src="img/birthday.jpg" alt="Birthday celebration group photo" loading="lazy"></button>
+  </div>
+  <div class="grid g2" data-set>
+    <button data-src="img/tea0.jpg" data-cap="1 October night: tea at the bus stand"><img src="img/tea0.jpg" alt="Rotarians having tea" loading="lazy"></button>
+    <button data-src="img/tea.jpg" data-cap="Night drive in Kadiri"><img src="img/tea.jpg" alt="Night drive" loading="lazy"></button>
+  </div>
+  <h3>Rotary impact</h3>
+  <div class="facts">
+    <div class="fact"><b>Children reached</b>96 registered; 100+ benefited as the residential campus welcomed more.</div>
+    <div class="fact"><b>Areas of Focus</b>Basic education and youth leadership; disease prevention through cervical cancer and HPV awareness.</div>
+    <div class="fact"><b>Rotarian involvement</b>Recce and setup, serving meals, handing out kits, hosting sessions and lighting the campfire.</div>
+  </div>
+</section>
+
+<section id="thanks">
+  <div class="ch"><span class="ico" style="background:var(--pink)"><svg><use href="#i-heart"/></svg></span><div><p class="kicker">Thank you</p><h2>Special thanks</h2></div></div>
+  <p>Our heartfelt thanks to everyone who made Intermeet possible, and above all to the children, whose energy made it what it was.</p>
+  <div class="grid g1" data-set>
+    <button data-src="img/pillars2.jpg" data-cap="Rtn. M.S. Prashanth and Rtn. M.S. Kiran, Correspondents of Harish Residential School and key members of Manasa Dhara Charitable Trust, felicitated at the Valedictory"><img src="img/pillars2.jpg" alt="Rtn Prashanth and Rtn Kiran being felicitated on stage" loading="lazy"></button>
+  </div>
+  <p class="cap">Rtn. M.S. Prashanth and Rtn. M.S. Kiran, Correspondents of Harish Residential School and key members of Manasa Dhara Charitable Trust, our main pillars of help, felicitated at the Valedictory.</p>
+  <div class="thanks">
+    <div><b>Rtn. Nagesh Babu</b>for initiating the whole discussion with Harish School.</div>
+    <div><b>Rtn. M.S. Prashanth and Rtn. M.S. Kiran</b>Correspondents of Harish Schools and key members of Manasa Dhara Charitable Trust, our main pillars of help, for opening the campus and their hearts.</div>
+    <div><b>Rtn. Vinaykumar</b>for spearheading the volunteers from Prakruthi NGO.</div>
+    <div><b>Rtn. Hariharan of Rotary Bangalore West</b>for his immense help.</div>
+    <div><b>Rotary Bangalore West (District 3192)</b>Rtn. Dr. M.S. Rajesh, President, and Rtn. Kriti T, Secretary.</div>
+    <div><b>Rotary Club of Kadiri (District 3160)</b>Rtn. Kishore, President, and Rtn. Raghavendra, Secretary, and the Kadiri team.</div>
+    <div><b>Rotaract Bangalore West</b>Rtr. Niraj, President, and Rtr. Dhriti, Secretary, and their volunteers.</div>
+    <div><b>Our trainers and volunteers</b>Ms. Sunitha Kolar, Ms. Sindhu Sajeev, Ms. Usha G and Ms. Kavya N of Buoyancee, and Mr. Munichowdappa and Ms. Padmini of Prakruthi NGO.</div>
+    <div><b>Partners</b>Manasa Dhara Charitable Trust and our doctors for the cervical cancer awareness programme.</div>
+    <div><b>Rotary Bangalore West volunteers</b>who travelled all the way to Kadiri and helped make this journey a fantastic memory.</div>
+  </div>
+  <p class="cap"><b>Camp Chairman:</b> Kishan Pallapothu · <b>Camp Director:</b> Latha S · <b>Youth Service Director:</b> Pradeepkumar K N</p>
+</section>
+
+<section id="telugu" lang="te">
+  <div class="tel">
+    <p class="kicker" style="font-family:var(--body)">తెలుగులో సారాంశం</p>
+    <h2>ఇంటర్‌మీట్ 2026</h2>
+    <p>2026 అక్టోబర్ 2, 3, 4 తేదీల్లో కదిరిలోని హరీష్ రెసిడెన్షియల్ స్కూల్‌లో రోటరీ బెంగళూరు వెస్ట్ మరియు రోటరీ క్లబ్ ఆఫ్ కదిరి సంయుక్తంగా మూడు రోజుల విద్యార్థి నాయకత్వ శిబిరం "ఇంటర్‌మీట్ 2026" నిర్వహించాయి. రోటరీ బెంగళూరు వెస్ట్ ఈ ప్రాజెక్టుకు నాయకత్వం వహించింది. 14–16 ఏళ్ల వయసు గల 96 మంది విద్యార్థులు నమోదు చేసుకున్నారు. రెసిడెన్షియల్ క్యాంపస్ కావడంతో 100 మందికి పైగా పిల్లలు ఈ కార్యక్రమం వల్ల లబ్ధి పొందారు.</p>
+    <p><b>మొదటి రోజు (అక్టోబర్ 2):</b> నమోదు, శిబిర కిట్ల పంపిణీ, ప్రారంభోత్సవం, ఆటలు, నాయకత్వ శిక్షణ. రాత్రి విద్యార్థుల ప్రతిభా ప్రదర్శన: నృత్యాలు, పాటలు, నాటికలు. రోటరాక్ట్ బెంగళూరు వెస్ట్ సభ్యులు కార్యక్రమాన్ని నిర్వహించారు.</p>
+    <p><b>రెండో రోజు (అక్టోబర్ 3):</b> ఉదయం యోగా, నాయకత్వం మరియు నైతిక విలువలపై సెషన్లు. ఈ ప్రాంతానికి అవసరమైన మాదకద్రవ్యాల దుర్వినియోగం మరియు మానవ అక్రమ రవాణాపై అవగాహన కార్యక్రమం ప్రకృతి ఎన్జీఓ వాలంటీర్లతో జరిగింది. అదే సమయంలో కదిరి ప్రభుత్వ బాలికల జూనియర్ కళాశాలలో సీనియర్ విద్యార్థినులకు గర్భాశయ ముఖద్వార క్యాన్సర్ మరియు HPV టీకాపై వైద్య నిపుణులతో అవగాహన కార్యక్రమం నిర్వహించారు. రాత్రి క్యాంప్‌ఫైర్ మరియు సమూహ ప్రతిభా ప్రదర్శన జరిగింది. రోటరీ సభ్యుడు కృష్ణమూర్తి గారి పుట్టినరోజు వేడుక కూడా జరిగింది.</p>
+    <p><b>మూడో రోజు (అక్టోబర్ 4):</b> యోగా, "ఆలోచనల నుంచి ఆచరణ వైపు", "నా నాయకత్వ ప్రతిజ్ఞ" సెషన్లు, ఆర్‌టీఓ ఇన్‌స్పెక్టర్ గారి రహదారి భద్రత సూచనలు. ముగింపు సభ (వాలిడిక్టరీ) రోటరీ బెంగళూరు వెస్ట్ మరియు రోటరీ కదిరి సంయుక్త సమావేశంగా, ఇంటర్‌మీట్ ముగింపు ఎజెండాతో జరిగింది. జ్యోతి ప్రజ్వలన, విద్యార్థుల ప్రదర్శనలు, ధ్రువపత్రాల ప్రదానం, వందన సమర్పణతో శిబిరం ముగిసింది.</p>
+    <p><b>రోటరీ సభ్యుల కృషి:</b> కొందరు రోటరీ సభ్యులు ముందుగానే కదిరి వచ్చి ఏర్పాట్లను పరిశీలించారు; అక్టోబర్ 1 రాత్రికి ఏర్పాట్లకు సహాయంగా చేరుకున్నారు. పిల్లలకు భోజనం వడ్డించడం, కిట్లు అందించడం వంటి పనుల్లో స్వయంగా పాల్గొన్నారు.</p>
+    <div class="clips" data-set>
+      <button data-src="img/press3.jpg" data-cap="ఆంధ్రజ్యోతి వార్త"><img src="img/press3.jpg" alt="ఆంధ్రజ్యోతి వార్త" loading="lazy"></button>
+      <button data-src="img/press4.jpg" data-cap="ముగింపు సభ వార్త"><img src="img/press4.jpg" alt="ముగింపు సభ వార్త" loading="lazy"></button>
+    </div>
+    <p><b>శిబిర చైర్మన్:</b> కిషన్ పల్లపోతు · <b>శిబిర డైరెక్టర్:</b> లత ఎస్ · <b>యూత్ సర్వీస్ డైరెక్టర్:</b> ప్రదీప్ కుమార్ కె ఎన్</p>
+  </div>
+</section>
+
+</main>
+<footer><div class="wrap">Intermeet 2026 · Rotary Bangalore West · Rotary Club of Kadiri · Harish Residential School, Kadiri</div></footer>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <button class="close" id="lbx" aria-label="Close">✕</button>
+  <div class="stage"><img id="lbi" alt=""></div>
+  <div class="bar"><button id="lbp" aria-label="Previous photo">‹</button><p id="lbc"></p><button id="lbn" aria-label="Next photo">›</button></div>
+</div>
+
+<script>
+(function(){
+  /* hero mosaic */
+  /* [photo, width/height of the photo, caption]; rows are justified so no photo is cropped */
+  var rows=[
+    [['close1',1.786,'Participants with their certificates'],['dance',1.776,'Group dance']],
+    [['girl',0.75,'Dinner time'],['camp3',1.776,'Campfire night'],['solo',1.776,'Solo dance']],
+    [['cc1',1.333,'After the awareness session'],['sing',1.776,'Singing on stage']]
+  ];
+  var mo=document.getElementById('mosaic');
+  rows.forEach(function(r){var row=document.createElement('div');row.className='mrow';
+    r.forEach(function(t){var b=document.createElement('button');b.style.setProperty('--a',t[1]);b.setAttribute('data-src','img/'+t[0]+'.jpg');b.setAttribute('data-cap',t[2]);b.setAttribute('aria-label',t[2]);var i=document.createElement('img');i.src='img/'+t[0]+'.jpg';i.alt=t[2];b.appendChild(i);row.appendChild(b);});
+    mo.appendChild(row);});
+
+  /* animated numbers; final value is already readable if scripts are slow */
+  var reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  document.querySelectorAll('[data-n]').forEach(function(el){
+    var n=+el.getAttribute('data-n'),plus=el.hasAttribute('data-plus')?'+':'';
+    if(reduce){el.textContent=n+plus;return;}
+    var t0=null;function step(ts){if(!t0)t0=ts;var p=Math.min((ts-t0)/1200,1);el.textContent=Math.round(n*(1-Math.pow(1-p,3)))+(p===1?plus:'');if(p<1)requestAnimationFrame(step);}
+    requestAnimationFrame(step);
+  });
+
+  /* journey stepper */
+  var stops=[['top','flag','Camp'],['before','bag','Setup'],['day1','sun','Day 1'],['stage','mic','Stage'],['day2','shield','Day 2'],['fire','fire','Fire'],['day3','cap','Day 3'],['news','news','News'],['rotarians','cake','Rotarians'],['thanks','heart','Thanks'],['telugu','te','తెలుగు']];
+  var steps=document.getElementById('steps');
+  stops.forEach(function(s){var a=document.createElement('a');a.href='#'+s[0];a.setAttribute('data-id',s[0]);a.innerHTML='<svg><use href="#i-'+s[1]+'"/></svg>'+s[2];
+    a.addEventListener('click',function(e){e.preventDefault();var el=document.getElementById(s[0]);if(el)el.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});});steps.appendChild(a);});
+  var links=steps.querySelectorAll('a'),prog=document.getElementById('prog');
+  function onScroll(){
+    var h=document.documentElement,max=h.scrollHeight-window.innerHeight;prog.style.width=(max>0?Math.min(100,h.scrollTop/max*100):0)+'%';
+    var cur=stops[0][0];stops.forEach(function(s){var el=document.getElementById(s[0]);if(el&&el.getBoundingClientRect().top<window.innerHeight*0.4)cur=s[0];});
+    links.forEach(function(a){var on=a.getAttribute('data-id')===cur;a.classList.toggle('on',on);if(on&&a.dataset.last!==cur){a.dataset.last=cur;var r=a.offsetLeft-steps.clientWidth/2+a.clientWidth/2;steps.scrollTo({left:r,behavior:reduce?'auto':'smooth'});}});
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+
+  /* day schedule rail */
+  var C={L:'var(--blue)',F:'var(--orange)',A:'var(--pink)',G:'var(--green)'};
+  var days=[
+   [['8:30 AM','Arrival and registration','G','Children arrive, collect camp kits and get their room allocations.'],['10:00 AM','Lighting the Leadership Spark','G','Welcome, introductions, theme launch and the inaugural ceremony.'],['10:15 AM','Meet, Move and Connect','F','An icebreaker that gets 96 children laughing and moving together.'],['11:15 AM','Discover the Leader Within','L','Self-awareness, values, strengths and confidence.'],['2:30 PM','Together We Rise','F','Team-building challenges on collaboration and trust.'],['4:30 PM','Speak, Listen and Influence','L','Communication, active listening and the 8 Core Pillars of a Powerful Presentation.'],['6:00 PM','Outdoor recreation','F','Supervised games and informal team bonding.'],['9:00 PM','My Moment to Shine','F','The individual talent show: music, dance, drama, storytelling and art.']],
+   [['6:00 AM','Rise and Energise','F','Yoga, stretching and exercise on the open ground.'],['9:00 AM','Lead with Integrity','L','Leadership styles, decisions, responsibility and ethical choices.'],['11:00 AM','Stay Strong, Stay Safe','A','Awareness on substance abuse, trafficking and personal safety with Prakruthi NGO volunteers.'],['2:30 PM','Design Your Future','L','Career discovery, goal-setting and life skills.'],['4:30 PM','Service Begins with Me','L','Rotary values, community needs and service-project ideas.'],['6:00 PM','Team sports','F','Outdoor games, teamwork and friendship.'],['8:30 PM','Fun Around the Fire','F','Campfire games and the group talent show, Stronger Together.']],
+   [['6:00 AM','Mindful Morning','F','Yoga and exercise to start the last day.'],['9:00 AM','From Ideas to Action','L','Turning leadership and service ideas into practical steps.'],['10:45 AM','My Leadership Promise','L','Each child writes a personal action plan and commitment.'],['12:00 PM','Road Safety','A','Practical road safety tips from an RTO Inspector.'],['12:30 PM','Planning the closing','F','Children prepare their own reflections, performances and thank-yous.'],['2:00 PM','Valedictory','G','The last event: a joint Rotary club meeting of Rotary Bangalore West and Rotary Club of Kadiri to close Intermeet, with presentations, certificates and a vote of thanks.'],['4:30 PM','Departure','G','Children are handed over as per authorised arrangements.']]
+  ];
+  var rail=document.getElementById('rail'),detail=document.getElementById('detail'),tabs=document.querySelectorAll('#tabs button');
+  function draw(d){rail.innerHTML='';days[d].forEach(function(s){var b=document.createElement('button');b.className='slot';b.style.setProperty('--c',C[s[2]]);b.setAttribute('aria-pressed','false');
+    b.innerHTML='<time>'+s[0]+'</time><b>'+s[1]+'</b>';b.addEventListener('click',function(){rail.querySelectorAll('.slot').forEach(function(x){x.setAttribute('aria-pressed','false')});b.setAttribute('aria-pressed','true');detail.innerHTML='<b>'+s[0]+' · '+s[1]+'</b><br>'+s[3];});rail.appendChild(b);});
+    detail.textContent='Tap a card above to see what happened.';rail.scrollLeft=0;}
+  tabs.forEach(function(t){t.addEventListener('click',function(){tabs.forEach(function(x){x.setAttribute('aria-selected','false')});t.setAttribute('aria-selected','true');draw(+t.getAttribute('data-day'));});});
+  draw(0);
+
+  /* full-screen viewer */
+  var all=Array.prototype.slice.call(document.querySelectorAll('[data-src]')),idx=0,lb=document.getElementById('lb'),li=document.getElementById('lbi'),lc=document.getElementById('lbc');
+  function show(i){idx=(i+all.length)%all.length;li.src=all[idx].getAttribute('data-src');lc.textContent=all[idx].getAttribute('data-cap')||'';li.alt=lc.textContent;}
+  function open(i){show(i);lb.classList.add('on');document.body.style.overflow='hidden';}
+  function close(){lb.classList.remove('on');document.body.style.overflow='';}
+  all.forEach(function(b,i){b.addEventListener('click',function(){open(i);});});
+  document.getElementById('lbx').onclick=close;document.getElementById('lbp').onclick=function(){show(idx-1)};document.getElementById('lbn').onclick=function(){show(idx+1)};
+  lb.addEventListener('click',function(e){if(e.target.classList.contains('stage'))close();});
+  document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')close();if(e.key==='ArrowLeft')show(idx-1);if(e.key==='ArrowRight')show(idx+1);});
+  var sx=null;lb.addEventListener('touchstart',function(e){sx=e.touches[0].clientX},{passive:true});
+  lb.addEventListener('touchend',function(e){if(sx===null)return;var dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>50)show(idx+(dx<0?1:-1));sx=null;},{passive:true});
+})();
+</script>
+</body>
+</html>
